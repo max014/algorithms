@@ -43,8 +43,10 @@ function makeGrid(){
 				this[next.pos] = true;
 				if(next.cell){
 					next.cell[next.opp] = true;
+					return next.cell; 
+				} else {
+					return undefined;
 				}
-				return next.cell; 
 			}
 		}
 	}
@@ -69,16 +71,18 @@ class PathFinding extends Component {
 		let current = grid[0];
 		current.visited = true;
 
-		let i = 0;
-		while(i < 100){
+		const stack = [];
+		stack.push(current);
+		while(stack.length){
 			let next = current.checkNeighbors();
-			if(next){
+			if(next !== undefined){
+				stack.push(current);
 				next.visited = true;
 				current = next;
+			} else {
+				current = stack.pop();
 			}
-			i++;
 		}
-
 		this.setState({maze: grid});
 	}
 

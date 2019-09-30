@@ -3,7 +3,7 @@ import React from 'react';
 const Cell = (props) => {
 	return (
 		<div style={{
-			backgroundColor: props.visited ? "blue" :'#fff',
+			backgroundColor: '#fff',
 			height: '52px',
 			width: '52px',
 			position: 'absolute',
