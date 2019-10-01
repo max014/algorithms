@@ -1,14 +1,15 @@
 import React from 'react';
 
 const Cell = (props) => {
+	const size = props.cellSize;
 	return (
 		<div style={{
-			backgroundColor: '#fff',
-			height: '52px',
-			width: '52px',
+			backgroundColor: props.color,
+			height: size + 'px',
+			width: size + 'px',
 			position: 'absolute',
-			top: props.row * 52,
-			left: props.col * 52,
+			top: props.row * size,
+			left: props.col * size,
 			borderTop: !props.top ? '2px solid black' : 'none',
 			borderRight: !props.right ? '2px solid black' : 'none',
 			borderBottom: !props.bottom ? '2px solid black' : 'none',

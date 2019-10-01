@@ -1,96 +1,127 @@
 import React, { Component } from 'react';
 import Cell from './Cell';
+import makeMaze from './makeMaze';
+import {Button} from 'antd';
 
-function index(i, j){
-	if(i<0 || j<0 || i>8 || j>21){
+function index(i, j, width, height){
+	if(i<0 || j<0 || i>height-1 || j>width-1){
 		return -1;
 	}
-	return (i*22) + j;
+	return (i*width) + j;
 }
-
-function makeGrid(){
-	const arr = [];
-	function cell(i, j){
-		this.row = i;
-		this.col = j;
-		this.top = false;
-		this.right = false;
-		this.bottom = false;
-		this.left = false;
-		this.visited = false;
-		this.checkNeighbors = () => {
-			const neighbors = [];
-			const top = {cell: arr[index(this.row-1, this.col)], pos: 'top', opp: 'bottom'};
-			const right = {cell: arr[index(this.row, this.col+1)], pos: 'right', opp: 'left'};
-			const bottom = {cell: arr[index(this.row+1, this.col)], pos: 'bottom', opp: 'top'};
-			const left = {cell: arr[index(this.row, this.col-1)], pos: 'left', opp: 'right'};
-
-			if(top.cell && !top.cell.visited){
-				neighbors.push(top);
-			}
-			if(right.cell && !right.cell.visited){
-				neighbors.push(right);
-			}
-			if(bottom.cell && !bottom.cell.visited){
-				neighbors.push(bottom);
-			}
-			if(left.cell && !left.cell.visited){
-				neighbors.push(left);
-			}
-
-			if(neighbors.length > 0){
-				const next = neighbors[Math.floor(Math.random() * neighbors.length)];
-				this[next.pos] = true;
-				if(next.cell){
-					next.cell[next.opp] = true;
-					return next.cell; 
-				} else {
-					return undefined;
-				}
-			}
-		}
-	}
-
-	for(let i=0; i<9; i++){
-		for(let j=0; j<22; j++){
-			arr.push(new cell(i, j));
-		}
-	}
-	return arr;
-}
-
 
 class PathFinding extends Component {
 	state = {
-		maze: []
+		maze: [],
+		steps: []
 	}
 	
 	componentDidMount(){
-		const grid = makeGrid();
+		this.setState({maze: makeMaze(35, 13)});
+	}
 
-		let current = grid[0];
-		current.visited = true;
-
+	dfs = async () => {
+		const arr = [...this.state.maze];
+		const steps = [];
+		let current = arr[0];
 		const stack = [];
 		stack.push(current);
 		while(stack.length){
-			let next = current.checkNeighbors();
-			if(next !== undefined){
+			if(current.row === 12 && current.col === 34){
+				current.color = 'limegreen';
+				let a = arr.map(cell => {
+					return {
+						row: cell.row,
+						col: cell.col,
+						color: cell.color,
+						top: cell.top,
+						right: cell.right,
+						bottom: cell.bottom,
+						left: cell.left
+					};
+				});
+				steps.push(a);
+				break;
+			}
+			current.color = 'pink';
+			const neighbors = [];
+			if(current.top){
+				let top = arr[index(current.row-1, current.col, 35, 13)];
+				if(top.color !== 'pink' && top.color !== 'red'){
+					neighbors.push(top);
+				}
+			}
+			if(current.right){
+				let right = arr[index(current.row, current.col+1, 35, 13)];
+				if(right.color !== 'pink' && right.color !== 'red'){
+					neighbors.push(right);
+				}
+			}
+			if(current.bottom){
+				let bottom = arr[index(current.row+1, current.col, 35, 13)];
+				if(bottom.color !== 'pink' && bottom.color !== 'red'){
+					neighbors.push(bottom);
+				}
+			}
+			if(current.left){
+				let left = arr[index(current.row, current.col-1, 35, 13)];
+				if(left.color !== 'pink' && left.color !== 'red'){
+					neighbors.push(left);
+				}
+			}
+			if(neighbors.length > 0){
+				current = neighbors[0];
 				stack.push(current);
-				next.visited = true;
-				current = next;
 			} else {
+				current.color = 'red';
 				current = stack.pop();
 			}
+			let a = arr.map(cell => {
+				return {
+					row: cell.row,
+					col: cell.col,
+					color: cell.color,
+					top: cell.top,
+					right: cell.right,
+					bottom: cell.bottom,
+					left: cell.left
+				};
+			});
+			steps.push(a);
 		}
-		this.setState({maze: grid});
+		await this.setState({steps: steps});
+		this.animate(0);
 	}
+
+	animate = (i) => {
+		if(this.state.steps[i+1]){
+			this.animation = setTimeout(() => this.animate(i+1), 100 );
+		}
+		this.setState({maze: this.state.steps[i]});
+	}
+
+	clear = () => {
+		clearTimeout(this.animation);
+		const maze = this.state.maze.map(cell => {
+			cell.color = '#fff';
+			return cell;
+		});
+		this.setState({maze: maze});
+	} 
 
 	render() {
 		return (
-			<div style={{position: 'relative'}}>
-				{this.state.maze.map((cell, i) => <Cell key={i} {...cell}/>)}
-			</div>
+			<React.Fragment>
+				<Button onClick={this.dfs}>
+					dfs
+				</Button>
+				<Button onClick={this.clear}>
+					clear
+				</Button>
+				<div style={{position: 'relative'}}>
+					{this.state.maze.map((cell, i) => <Cell key={i} {...cell} cellSize={34}/>)}
+				</div>
+			</React.Fragment>
 		);
 	}
 }
