@@ -195,17 +195,17 @@ class Sort extends Component {
 
   render(){
     const menu = (
-    <Menu 
-      onClick={this.select}
-      selectedKeys={[this.state.algo]}
-      title={<span><Icon type="setting" />Choose Algorithm</span>}
-      className={styles.Width}>
-      <Menu.Item key={'Quick Sort'}>Quick Sort</Menu.Item>
-      <Menu.Item key={'Merge Sort'}>Merge Sort</Menu.Item>
-      <Menu.Item key={'Selection Sort'}>Selection Sort</Menu.Item>
-      <Menu.Item key={'Bubble Sort'}>Bubble Sort</Menu.Item>
-    </Menu>
-  );
+      <Menu 
+        onClick={this.select}
+        selectedKeys={[this.state.algo]}
+        title={<span><Icon type="setting" />Choose Algorithm</span>}
+        className={styles.Width}>
+        <Menu.Item key={'Quick Sort'}>Quick Sort</Menu.Item>
+        <Menu.Item key={'Merge Sort'}>Merge Sort</Menu.Item>
+        <Menu.Item key={'Selection Sort'}>Selection Sort</Menu.Item>
+        <Menu.Item key={'Bubble Sort'}>Bubble Sort</Menu.Item>
+      </Menu>
+    );
     return (
       <React.Fragment>
         <div className={styles.DashBoard}>

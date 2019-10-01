@@ -14,6 +14,7 @@ const Cell = (props) => {
 			borderRight: !props.right ? '2px solid black' : 'none',
 			borderBottom: !props.bottom ? '2px solid black' : 'none',
 			borderLeft: !props.left ? '2px solid black' : 'none',
+			boxSizing: 'border-box'
 		}}></div>
 	);
 }

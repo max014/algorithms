@@ -37,6 +37,10 @@ function makeMaze(width, height){
 			if(neighbors.length > 0){
 				const next = neighbors[Math.floor(Math.random() * neighbors.length)];
 				this[next.pos] = true;
+				if(bottom.cell && Math.random() < 0.1){ // makes multiple solutions
+					this.bottom = true;
+					bottom.cell.top = true;
+				}
 				if(next.cell){
 					next.cell[next.opp] = true;
 					return next.cell; 
